@@ -29,5 +29,6 @@ func (r *Reconfigurer) Reconfigure(target, pipeline, configPath, variablesPath s
 	cmd.Stdout = os.Stdout
 	cmd.Stderr = os.Stderr
 
+	defer os.Remove(configPath)
 	return r.commandRunner.Run(cmd)
 }

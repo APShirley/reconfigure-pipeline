@@ -5,7 +5,6 @@ import (
 	"log"
 	"os"
 	"path/filepath"
-	"syscall"
 )
 
 type Writer struct {
@@ -22,21 +21,21 @@ func (f *Writer) Write(content string) (string, error) {
 	}
 
 	fifoPath := filepath.Join(tempDir, "fifo")
-	err = syscall.Mkfifo(fifoPath, 0600)
+	// err = syscall.Mkfifo(fifoPath, 0600)
+	// if err != nil {
+	// 	return "", err
+	// }
+
+	// go func() {
+	fi, err := os.Create(fifoPath)
+	defer fi.Close()
+
 	if err != nil {
-		return "", err
+		log.Fatal(err)
 	}
 
-	go func() {
-		f, err := os.OpenFile(fifoPath, os.O_WRONLY, 0600)
-		defer f.Close()
-
-		if err != nil {
-			log.Fatal(err)
-		}
-
-		f.WriteString(content)
-	}()
+	fi.WriteString(content)
+	// }()
 
 	return fifoPath, nil
 }
